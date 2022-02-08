@@ -6,7 +6,7 @@
 /*   By: agiraude <agiraude@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 15:57:46 by agiraude          #+#    #+#             */
-/*   Updated: 2022/02/05 16:16:40 by agiraude         ###   ########.fr       */
+/*   Updated: 2022/02/08 12:18:33 by agiraude         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,18 @@ int	ft_strisnb(const char *str)
 	return (1);
 }
 
+int	ft_strlen(const char *str)
+{
+	int	i;
+
+	i = 0;
+	if (!str)
+		return (0);
+	while (str[i])
+		i++;
+	return (i);
+}
+
 long int	time_getstamp(void)
 {
 	struct timeval	tm;
@@ -55,4 +67,26 @@ long int	time_getstamp(void)
 	if (start_ms == 0)
 		start_ms = ms;
 	return (ms - start_ms);
+}
+
+char		*ft_strnstr(const char *big, const char *little, size_t len)
+{
+	size_t	i;
+
+	if (!(*little))
+		return (0);
+	while (*big && len > 0)
+	{
+		if (*big == *little)
+		{
+			i = 0;
+			while (little[i] && big[i] == little[i] && i < len)
+				i++;
+			if (little[i] == '\0')
+				return ((char*)big);
+		}
+		big++;
+		len--;
+	}
+	return (0);
 }

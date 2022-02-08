@@ -6,7 +6,7 @@
 #    By: agiraude <agiraude@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/02/06 15:43:27 by agiraude          #+#    #+#              #
-#    Updated: 2022/02/05 15:32:51 by agiraude         ###   ########.fr        #
+#    Updated: 2022/02/08 11:47:55 by agiraude         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 NAME			=	philo
@@ -15,9 +15,12 @@ INC_DIR			=	-I includes/
 
 DEP				=	-pthread
 
-SRCS_FILE		=	forkmaster.c \
+SRCS_FILE		=	fifo.c \
+					forkmaster.c \
 					main.c \
+					msg.c \
 					philo.c \
+					philo_do.c \
 					room.c \
 					utils.c
 

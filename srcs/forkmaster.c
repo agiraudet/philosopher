@@ -6,7 +6,7 @@
 /*   By: agiraude <agiraude@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 15:33:35 by agiraude          #+#    #+#             */
-/*   Updated: 2022/02/05 16:59:43 by agiraude         ###   ########.fr       */
+/*   Updated: 2022/02/08 14:58:47 by agiraude         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,13 @@ int		forkmaster_ask(t_philo *self)
 	return (ok);
 }
 
-void	forkmaster_tell(t_philo *self)
+void	forkmaster_tell(t_philo *self, int fork_id)
 {
 	t_fm	*forkmaster;
 
 	forkmaster = self->forkmaster;
 	pthread_mutex_lock(&(forkmaster->lock));
-	forkmaster->status[self->fork_l] = 1;
-	forkmaster->status[self->fork_r] = 1;
+	forkmaster->status[fork_id] = 1;
 	pthread_mutex_unlock(&(forkmaster->lock));
 }
 

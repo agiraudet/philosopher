@@ -6,116 +6,81 @@
 /*   By: agiraude <agiraude@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 16:25:27 by agiraude          #+#    #+#             */
-/*   Updated: 2022/02/05 17:54:10 by agiraude         ###   ########.fr       */
+/*   Updated: 2022/02/08 15:56:50 by agiraude         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+int	philo_are_fat(t_rules *ruleset)
+{
+	int	i;
+
+	i = 0;
+	while (i < ruleset->nb_philo)
+		if (ruleset->nb_eat_to_end != -1
+				&& ruleset->meals[i++] < ruleset->nb_eat_to_end)
+			return (0);
+	return (1);
+}
+
+void	philo_letgo(t_philo *self)
+{
+	if (self->hold[0] == 1)
+		philo_use_fork(self, self->fork_l, PUT_FORK);
+	if (self->hold[1] == 1)
+		philo_use_fork(self, self->fork_r, PUT_FORK);
+}
+
 int	philo_is_alive(t_philo *self)
 {
 	long int	ms;
-	int			ret;
 
 	ms = time_getstamp();
-	pthread_mutex_lock(&(self->death->lock));
-	if (self->death->count > 0)
-		ret = 0;
-	else if (self->ruleset.tm_to_die < ms - self->last_meal)
+	if (self->ruleset->tm_to_die < ms - self->last_meal)
 	{
-		printf("%ld %d died\n", ms, self->id);
-		self->death->count += 1;
-		ret = 0;
+		pthread_mutex_lock(&self->death->lock);
+		self->death->dead = 1;
+		pthread_mutex_unlock(&self->death->lock);
+		msg_put(self, ms, "died");
+	}
+	if (self->death->dead || philo_are_fat(self->ruleset))
+	{
+		philo_letgo(self);
+		return (0);
+	}
+	return (1);
+}
+
+void	philo_wait(t_philo *self, long int tm_to_wait)
+{
+	long int	ms;
+	long int	life;
+
+	if (self->death->dead)
+		return ;
+	ms = time_getstamp();
+	if (ms + tm_to_wait > self->last_meal + self->ruleset->tm_to_die)
+	{
+		life = (self->last_meal + self->ruleset->tm_to_die) - ms;
+		life++;
+		usleep(life * 1000);
+		philo_is_alive(self);
 	}
 	else
-		ret = 1;
-	pthread_mutex_unlock(&(self->death->lock));
-	return (ret);
-}
-
-void	philo_put_msg(t_philo *self, long int ms, const char *msg)
-{
-	if (philo_is_alive(self))
-		printf("%ld %d %s\n", ms, self->id, msg);
-}
-
-void	philo_use_fork(t_philo *self, int fork_id, int use)
-{
-	long int	ms;
-
-	if (use == PICK_FORK)
-	{
-		pthread_mutex_lock(&(self->forkmaster->forks[fork_id]));
-		ms = time_getstamp();
-		printf("%ld %d has taken a fork\n", ms, self->id);
-	}
-	else if (use == PUT_FORK)
-		pthread_mutex_unlock(&(self->forkmaster->forks[fork_id]));
-}
-
-void	philo_sleep(t_philo *self)
-{
-	long int	ms;
-
-	ms = time_getstamp();
-	self->last_sleep = ms;
-	philo_put_msg(self, ms, "is sleeping");
-	//tester
-	forkmaster_tell(self);
-
-	usleep(self->ruleset.tm_to_sleep * 1000);
-}
-
-void	philo_think(t_philo *self)
-{
-	long int	ms;
-
-	ms = time_getstamp();
-	philo_put_msg(self, ms, "is thinking");
-}
-
-void	philo_eat(t_philo *self)
-{
-	long int	ms;
-
-	ms = time_getstamp();
-	self->last_meal = ms;
-	self->nb_meal += 1;
-	philo_put_msg(self, ms, "is eating");
-	usleep(self->ruleset.tm_to_eat * 1000);
+		usleep(tm_to_wait * 1000);
 }
 
 void	*philo_run(void *self_ptr)
 {
 	t_philo	*self;
-	int		monitor_meals;
-	
 
 	if (!self_ptr)
 		return (0);
 	self = (t_philo *)self_ptr;
 	self->last_meal = time_getstamp();
 	self->last_sleep = time_getstamp();
-	monitor_meals = 0;
-	if (self->ruleset.nb_eat_to_end != -1)
-		monitor_meals = 1;
-	while (philo_is_alive(self))
-	{
-		if (self->nb_meal >= self->ruleset.nb_eat_to_end && monitor_meals)
-			break ;
-		if (forkmaster_ask(self))
-		{
-			philo_use_fork(self, self->fork_l, PICK_FORK);
-			philo_use_fork(self, self->fork_r, PICK_FORK);
-			philo_eat(self);
-			philo_use_fork(self, self->fork_l, PUT_FORK);
-			philo_use_fork(self, self->fork_r, PUT_FORK);
-			//tester
-			//forkmaster_tell(self);
-			philo_sleep(self);
-			philo_think(self);
-		}
-	}
+	philo_loop(self);
 	free(self);
 	return (0);
 }
