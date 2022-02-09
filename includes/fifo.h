@@ -6,7 +6,7 @@
 /*   By: agiraude <agiraude@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/08 09:39:38 by agiraude          #+#    #+#             */
-/*   Updated: 2022/02/08 15:16:32 by agiraude         ###   ########.fr       */
+/*   Updated: 2022/02/09 11:25:21 by agiraude         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 # define FIFO_SIZE 1000
 
-typedef struct	s_fifo
+typedef struct s_fifo
 {
 	char	*buf;
 	int		head;

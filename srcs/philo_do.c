@@ -6,7 +6,7 @@
 /*   By: agiraude <agiraude@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 16:25:27 by agiraude          #+#    #+#             */
-/*   Updated: 2022/02/08 15:55:54 by agiraude         ###   ########.fr       */
+/*   Updated: 2022/02/09 11:12:01 by agiraude         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,11 @@ int	philo_loop(t_philo *self)
 			philo_use_fork(self, self->fork_r, PICK_FORK);
 			philo_eat(self);
 			philo_letgo(self);
+			if (!philo_is_alive(self))
+				break ;
 			philo_sleep(self);
+			if (!philo_is_alive(self))
+				break ;
 			philo_think(self);
 		}
 	}

@@ -6,26 +6,11 @@
 /*   By: agiraude <agiraude@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/08 11:03:47 by agiraude          #+#    #+#             */
-/*   Updated: 2022/02/08 15:17:53 by agiraude         ###   ########.fr       */
+/*   Updated: 2022/02/09 11:24:20 by agiraude         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-t_fifo	*msg_fifo(int destroy)
-{
-	static	t_fifo	*f = 0;
-
-	if (!f)
-		f = fifo_create(FIFO_SIZE);
-	if (destroy)
-	{
-		free(f->buf);
-		free(f);
-		f = 0;
-	}
-	return (f);
-}
 
 void	msg_putnbr(long int n, char *buf, int *i)
 {
@@ -80,20 +65,19 @@ void	msg_put(t_philo *self, long int ms, char *msg)
 
 int	msg_died(char *msg)
 {
-	char *died;
+	char	*died;
 
 	died = ft_strnstr(msg, "died", ft_strlen(msg));
 	if (!died)
-		return (1);
+		return (0);
 	died[5] = 0;
-	return (0);
+	return (1);
 }
 
 void	*msg_thread(void *lock)
 {
 	t_fifo	*f;
 	char	buf[MSG_BUF_SIZE];
-	int		keep_going;
 
 	f = msg_fifo(0);
 	if (!f)
@@ -101,8 +85,7 @@ void	*msg_thread(void *lock)
 		printf("fifo error\n");
 		return (0);
 	}
-	keep_going = 1;
-	while (keep_going)
+	while (!f->stop)
 	{
 		if (f->tail != f->head)
 		{
@@ -110,10 +93,9 @@ void	*msg_thread(void *lock)
 			pthread_mutex_lock(lock);
 			fifo_read(f, buf, MSG_BUF_SIZE - 1);
 			pthread_mutex_unlock(lock);
-			keep_going = msg_died(buf);
+			f->stop = msg_died(buf);
 			printf("%s", buf);
 		}
 	}
-	f->stop = 1;
 	return (0);
 }

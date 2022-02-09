@@ -6,13 +6,13 @@
 /*   By: agiraude <agiraude@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 15:33:35 by agiraude          #+#    #+#             */
-/*   Updated: 2022/02/08 14:58:47 by agiraude         ###   ########.fr       */
+/*   Updated: 2022/02/09 11:14:57 by agiraude         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int		forkmaster_ask(t_philo *self)
+int	forkmaster_ask(t_philo *self)
 {
 	t_fm	*forkmaster;
 	int		ok;
@@ -49,6 +49,7 @@ void	forkmaster_del(t_fm *forkmaster)
 	i = 0;
 	while (i != forkmaster->nb_fork)
 		pthread_mutex_destroy(&(forkmaster->forks[i++]));
+	pthread_mutex_destroy(&forkmaster->lock);
 	free(forkmaster->forks);
 	free(forkmaster->status);
 	free(forkmaster);

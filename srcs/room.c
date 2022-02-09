@@ -6,13 +6,14 @@
 /*   By: agiraude <agiraude@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/05 14:18:30 by agiraude          #+#    #+#             */
-/*   Updated: 2022/02/08 14:55:26 by agiraude         ###   ########.fr       */
+/*   Updated: 2022/02/09 11:21:40 by agiraude         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	*room_create_philo(int id, t_rules *ruleset, t_fm *forkmaster, t_death *death)
+void	*room_create_philo(int id, t_rules *ruleset,
+		t_fm *forkmaster, t_death *death)
 {
 	t_philo	*philo;
 
@@ -38,7 +39,6 @@ int	room_init(t_fm **forkmaster, t_rules *ruleset, t_death *death)
 	if (pthread_mutex_init(&death->lock, NULL) != 0)
 		return (0);
 	death->dead = 0;
-	memset(ruleset->meals, 0, ruleset->nb_philo);
 	*forkmaster = forkmaster_create(ruleset->nb_philo);
 	if (!*forkmaster)
 		return (0);
@@ -69,6 +69,19 @@ pthread_t	*room_philolst(t_rules *ruleset, t_fm *forkmaster, t_death *death)
 	return (philo_lst);
 }
 
+void	room_cleanup(pthread_t *philo_lst, t_fm *forkmaster,
+		t_death *death, t_rules *ruleset)
+{
+	msg_fifo(0)->stop = 1;
+	pthread_mutex_destroy(&ruleset->talk);
+	pthread_mutex_destroy(&death->lock);
+	free(ruleset->meals);
+	free(ruleset);
+	free(philo_lst);
+	forkmaster_del(forkmaster);
+	msg_fifo(1);
+}
+
 int	room_play(t_rules *ruleset)
 {
 	pthread_t	*philo_lst;
@@ -90,7 +103,6 @@ int	room_play(t_rules *ruleset)
 	i = 0;
 	while (i < ruleset->nb_philo)
 		pthread_join(philo_lst[i++], 0);
-	free(philo_lst);
-	forkmaster_del(forkmaster);
+	room_cleanup(philo_lst, forkmaster, &death, ruleset);
 	return (0);
 }

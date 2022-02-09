@@ -6,7 +6,7 @@
 /*   By: agiraude <agiraude@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 15:59:07 by agiraude          #+#    #+#             */
-/*   Updated: 2022/02/08 15:07:38 by agiraude         ###   ########.fr       */
+/*   Updated: 2022/02/09 11:26:52 by agiraude         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,18 @@
 # define PUT_FORK 0
 # define MSG_BUF_SIZE 50
 
-typedef struct	s_rules
+typedef struct s_rules
 {
-	int			nb_philo;
-	long int	tm_to_die;
-	long int	tm_to_eat;
-	long int	tm_to_sleep;
-	int			nb_eat_to_end;
-	int			*meals;
+	int				nb_philo;
+	long int		tm_to_die;
+	long int		tm_to_eat;
+	long int		tm_to_sleep;
+	int				nb_eat_to_end;
+	int				*meals;
 	pthread_mutex_t	talk;
 }				t_rules;
 
-typedef struct	s_fork_master
+typedef struct s_fork_master
 {
 	int				nb_fork;
 	int				*status;
@@ -44,23 +44,23 @@ typedef struct	s_fork_master
 	pthread_mutex_t	lock;
 }				t_fm;
 
-typedef struct	s_death
+typedef struct s_death
 {
-	pthread_mutex_t lock;
+	pthread_mutex_t	lock;
 	int				dead;
 }				t_death;
 
-typedef struct	s_philo
+typedef struct s_philo
 {
-	int				id;
-	int				fork_l;
-	int				fork_r;
-	int				hold[2];
-	long int		last_meal;
-	long int		last_sleep;
-	t_rules			*ruleset;
-	t_fm			*forkmaster;
-	t_death			*death;
+	int			id;
+	int			fork_l;
+	int			fork_r;
+	int			hold[2];
+	long int	last_meal;
+	long int	last_sleep;
+	t_rules		*ruleset;
+	t_fm		*forkmaster;
+	t_death		*death;
 }				t_philo;
 
 //fifo
@@ -75,13 +75,13 @@ void		forkmaster_del(t_fm *forkmaster);
 t_fm		*forkmaster_create(int n);
 
 //msg
-t_fifo	*msg_fifo(int destroy);
+t_fifo		*msg_fifo(int destroy);
 void		msg_put(t_philo *self, long int ms, char *msg);
 void		*msg_thread(void *ptr);
 
 //philo
 void		philo_use_fork(t_philo *self, int fork_id, int use);
-void	philo_letgo(t_philo *self);
+void		philo_letgo(t_philo *self);
 int			philo_is_alive(t_philo *self);
 void		philo_wait(t_philo *self, long int tm_to_wait);
 void		*philo_run(void *self_ptr);

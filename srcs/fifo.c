@@ -6,7 +6,7 @@
 /*   By: agiraude <agiraude@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/08 09:40:30 by agiraude          #+#    #+#             */
-/*   Updated: 2022/02/08 15:16:15 by agiraude         ###   ########.fr       */
+/*   Updated: 2022/02/09 11:24:17 by agiraude         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	fifo_read(t_fifo *f, char *buf, int nbytes)
 
 int	fifo_write(t_fifo *f, const char *buf, int nbytes)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < nbytes)
@@ -71,4 +71,19 @@ int	fifo_write(t_fifo *f, const char *buf, int nbytes)
 		i++;
 	}
 	return (nbytes);
+}
+
+t_fifo	*msg_fifo(int destroy)
+{
+	static t_fifo	*f = 0;
+
+	if (!f)
+		f = fifo_create(FIFO_SIZE);
+	if (destroy && f)
+	{
+		free(f->buf);
+		free(f);
+		f = 0;
+	}
+	return (f);
 }

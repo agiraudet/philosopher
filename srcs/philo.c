@@ -6,7 +6,7 @@
 /*   By: agiraude <agiraude@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 16:25:27 by agiraude          #+#    #+#             */
-/*   Updated: 2022/02/08 15:56:50 by agiraude         ###   ########.fr       */
+/*   Updated: 2022/02/09 11:19:29 by agiraude         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	philo_are_fat(t_rules *ruleset)
 	i = 0;
 	while (i < ruleset->nb_philo)
 		if (ruleset->nb_eat_to_end != -1
-				&& ruleset->meals[i++] < ruleset->nb_eat_to_end)
+			&& ruleset->meals[i++] < ruleset->nb_eat_to_end)
 			return (0);
 	return (1);
 }

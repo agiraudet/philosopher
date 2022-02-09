@@ -6,7 +6,7 @@
 /*   By: agiraude <agiraude@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 15:57:46 by agiraude          #+#    #+#             */
-/*   Updated: 2022/02/08 12:18:33 by agiraude         ###   ########.fr       */
+/*   Updated: 2022/02/09 11:22:04 by agiraude         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ long int	time_getstamp(void)
 	return (ms - start_ms);
 }
 
-char		*ft_strnstr(const char *big, const char *little, size_t len)
+char	*ft_strnstr(const char *big, const char *little, size_t len)
 {
 	size_t	i;
 
@@ -83,7 +83,7 @@ char		*ft_strnstr(const char *big, const char *little, size_t len)
 			while (little[i] && big[i] == little[i] && i < len)
 				i++;
 			if (little[i] == '\0')
-				return ((char*)big);
+				return ((char *)big);
 		}
 		big++;
 		len--;
